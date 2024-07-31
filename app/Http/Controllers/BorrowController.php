@@ -112,22 +112,12 @@ class BorrowController extends Controller
         $now = Carbon::now();
 
         // Cek apakah peminjaman lebih dari 7 hari
-        // $diffInMinutes = $borrowedAt->diffInMinutes($now);
-
-        // if ($diffInMinutes > 1) {
-        //     $borrow->member->penalty_end_at = $now->addMinutes(3);
-        //     $borrow->member->save(['timestamps' => false]); // Menyimpan tanpa timestamps
-        //     $message = 'Anda terkena penalty selama 3 menit karena keterlambatan';
-        // } else {
-        //     $message = 'Buku berhasil dikembalikan tepat waktu';
-        // }
-
         $diffInDays = $borrowedAt->diffInDays($now);
 
         if ($diffInDays > 7) {
-            $borrow->member->penalty_end_at = $now->addDays(7);
+            $borrow->member->penalty_end_at = $now->addDays(3);
             $borrow->member->save(['timestamps' => false]); // Menyimpan tanpa timestamps
-            $message = 'Anda terkena penalty selama 7 hari karena keterlambatan';
+            $message = 'Anda terkena penalty selama 3 hari karena keterlambatan';
         } else {
             $message = 'Buku berhasil dikembalikan tepat waktu';
         }
