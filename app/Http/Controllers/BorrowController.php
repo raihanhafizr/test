@@ -75,8 +75,6 @@ class BorrowController extends Controller
         }
     }
 
-
-
     /**
      * @OA\Post(
      *     path="/api/return",
@@ -113,13 +111,23 @@ class BorrowController extends Controller
         $borrowedAt = Carbon::parse($borrow->borrowed_at);
         $now = Carbon::now();
 
-        // Cek apakah peminjaman lebih dari 1 menit
-        $diffInMinutes = $borrowedAt->diffInMinutes($now);
+        // Cek apakah peminjaman lebih dari 7 hari
+        // $diffInMinutes = $borrowedAt->diffInMinutes($now);
 
-        if ($diffInMinutes > 1) {
-            $borrow->member->penalty_end_at = $now->addMinutes(3);
+        // if ($diffInMinutes > 1) {
+        //     $borrow->member->penalty_end_at = $now->addMinutes(3);
+        //     $borrow->member->save(['timestamps' => false]); // Menyimpan tanpa timestamps
+        //     $message = 'Anda terkena penalty selama 3 menit karena keterlambatan';
+        // } else {
+        //     $message = 'Buku berhasil dikembalikan tepat waktu';
+        // }
+
+        $diffInDays = $borrowedAt->diffInDays($now);
+
+        if ($diffInDays > 7) {
+            $borrow->member->penalty_end_at = $now->addDays(7);
             $borrow->member->save(['timestamps' => false]); // Menyimpan tanpa timestamps
-            $message = 'Anda terkena penalty selama 3 menit karena keterlambatan';
+            $message = 'Anda terkena penalty selama 7 hari karena keterlambatan';
         } else {
             $message = 'Buku berhasil dikembalikan tepat waktu';
         }
